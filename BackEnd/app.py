@@ -45,46 +45,31 @@ games = {}
 def start_game():
     data = request.json
     player_name = data.get('player_name')
+    player_guess = data.get('player_guess')
 
-    if player_name:
-        # Criar uma nova instância do jogo para o jogador
-        new_game = Game(player_name)
-        games[player_name] = new_game
-        return jsonify({"message": f"Bem-vindo, {player_name}! O jogo começou. Tente adivinhar o número entre 0 e 100!"}), 200
-    return jsonify({"message": "Nome do jogador é necessário!"}), 400
+    # Verificar se o jogador tem um jogo em andamento
+    game = games.get(player_name)
+    if not game:
+        return jsonify({"message": f"Jogador {player_name} não iniciou um jogo. Use /start_game primeiro."}), 400
 
-@app.route('/make_guess', methods=['POST'])
-def make_guess():
-    data = request.json
-    player_name = data.get('player_name')
+    # Converter palpite para inteiro
+    try:
+        player_guess = int(player_guess)
+    except ValueError:
+        return jsonify({"message": "Por favor, forneça um número válido como palpite!"}), 400
 
-    if player_name:
-        # Criar uma nova instância do jogo para o jogador
-        new_game = Game(player_name)
-        games[player_name] = new_game
-        return jsonify({"message": f"Bem-vindo, {player_name}! O jogo começou. Tente adivinhar o número entre 0 e 100!"}), 200
-    return jsonify({"message": "Nome do jogador é necessário!"}), 400
-    # data = request.json
-    # player_name = data.get('player_name')
-    # player_guess = data.get('player_guess')
+    # Verificar o palpite do jogador
+    result = game.guess(player_guess)
 
-    # if not player_name or player_guess is None:
-    #     return jsonify({"message": "Nome do jogador e o palpite são necessários!"}), 400
-
-    # # Verificar se o jogador tem um jogo em andamento
-    # game = games.get(player_name)
-    # if not game:
-    #     return jsonify({"message": f"Jogador {player_name} não iniciou um jogo. Use /start_game primeiro."}), 400
-
-    # # Converter palpite para inteiro
-    # try:
-    #     player_guess = int(player_guess)
-    # except ValueError:
-    #     return jsonify({"message": "Por favor, forneça um número válido como palpite!"}), 400
-
-    # # Verificar o palpite do jogador
-    # result = game.guess(player_guess)
-
+    # Se o jogador acertou, registra no banco de dados
+    if result == "Parabéns, você acertou o número!":
+        # # Se o banco de dados estivesse configurado
+        # new_winner = Scoreboard(player_name=player_name)
+        # db.session.add(new_winner)
+        # db.session.commit()
+        return jsonify({"message": f"Parabéns, {player_name}! Você venceu o jogo em {game.attempts} tentativas!"}), 200
+    else:
+        return jsonify({"message": result}), 200
     # # # Se o jogador acertou, registra no banco de dados
     # # if result == "Parabéns, você acertou o número!":
     # #     new_winner = Scoreboard(player_name=player_name)
