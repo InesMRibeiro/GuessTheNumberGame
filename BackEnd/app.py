@@ -2,8 +2,10 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import random
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # # Conexão com o banco de dados PostgreSQL
 # database_ip = os.getenv('DATABASE_IP')  # Obtém o IP da variável de ambiente
