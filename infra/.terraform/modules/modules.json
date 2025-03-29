@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"backend","Source":"./backend.tf","Dir":"backend.tf"},{"Key":"database","Source":"./database.tf","Dir":"database.tf"},{"Key":"frontend","Source":"./frontend.tf","Dir":"frontend.tf"},{"Key":"network","Source":"./security_groups.tf","Dir":"security_groups.tf"},{"Key":"outputs","Source":"./outputs.tf","Dir":"outputs.tf"}]}
