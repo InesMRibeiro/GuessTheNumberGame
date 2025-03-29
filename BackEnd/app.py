@@ -1,33 +1,15 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-import random
-import os
 from flask_cors import CORS
+import random
 
 app = Flask(__name__)
-#CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://98.84.26.80"}})  # Allowing only your frontend
 
-# # Conexão com o banco de dados PostgreSQL
-# database_ip = os.getenv('DATABASE_IP')  # Obtém o IP da variável de ambiente
-
-# # Configuração do Flask
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:strongpassword@{database_ip}:5432/WINNERS'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
-
-# # Tabela Scoreboard
-# class Scoreboard(db.Model):
-#     __tablename__ = 'scoreboard'
-    
-#     id = db.Column(db.Integer, primary_key=True)
-#     player_name = db.Column(db.String(255), nullable=False)
-#     win_date = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-# Lógica do jogo
+# Game logic
 class Game:
     def __init__(self, player_name):
         self.player_name = player_name
-        self.secret_number = random.randint(0, 100)  # Número aleatório entre 0 e 100
+        self.secret_number = random.randint(0, 100)  # Number between 0 and 100
         self.attempts = 0
 
     def guess(self, player_guess):
@@ -47,7 +29,7 @@ def start_game():
     player_name = data.get('player_name')
 
     if player_name:
-        # Criar uma nova instância do jogo para o jogador
+        # Create a new game instance for the player
         new_game = Game(player_name)
         games[player_name] = new_game
         return jsonify({"message": f"Bem-vindo, {player_name}! O jogo começou. Tente adivinhar o número entre 0 e 100!"}), 200
@@ -56,25 +38,31 @@ def start_game():
 @app.route('/make_guess', methods=['POST'])
 def make_guess():
     data = request.json
+    player_name = data.get('player_name')
     player_guess = data.get('player_guess')
 
-    # Converter palpite para inteiro
+    if not player_name or player_guess is None:
+        return jsonify({"message": "Nome do jogador e o palpite são necessários!"}), 400
+
+    # Check if the player has an ongoing game
+    game = games.get(player_name)
+    if not game:
+        return jsonify({"message": f"Jogador {player_name} não iniciou um jogo. Use /start_game primeiro."}), 400
+
+    # Convert the guess to an integer
     try:
         player_guess = int(player_guess)
     except ValueError:
         return jsonify({"message": "Por favor, forneça um número válido como palpite!"}), 400
 
-    # Verificar o palpite do jogador
-    result = Game.guess(player_guess)
+    # Check the player's guess
+    result = game.guess(player_guess)
 
-    # # # Se o jogador acertou, registra no banco de dados
-    # # if result == "Parabéns, você acertou o número!":
-    # #     new_winner = Scoreboard(player_name=player_name)
-    # #     db.session.add(new_winner)
-    # #     db.session.commit()
-    # #     return jsonify({"message": f"Parabéns, {player_name}! Você venceu o jogo em {game.attempts} tentativas!"}), 200
-    # # else:
-    # #     return jsonify({"message": result}), 200
+    # If the player guessed correctly, register it in the database (if needed)
+    if result == "Parabéns, você acertou o número!":
+        return jsonify({"message": f"Parabéns, {player_name}! Você venceu o jogo em {game.attempts} tentativas!"}), 200
+    else:
+        return jsonify({"message": result}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
