@@ -56,13 +56,7 @@ def start_game():
 @app.route('/make_guess', methods=['POST'])
 def make_guess():
     data = request.json
-    player_name = data.get('player_name')
     player_guess = data.get('player_guess')
-
-    # Verificar se o jogador tem um jogo em andamento
-    game = games.get(player_name)
-    if not game:
-        return jsonify({"message": f"Jogador {player_name} não iniciou um jogo. Use /start_game primeiro."}), 400
 
     # Converter palpite para inteiro
     try:
@@ -71,7 +65,7 @@ def make_guess():
         return jsonify({"message": "Por favor, forneça um número válido como palpite!"}), 400
 
     # Verificar o palpite do jogador
-    result = game.guess(player_guess)
+    result = Game.guess(player_guess)
 
     # # # Se o jogador acertou, registra no banco de dados
     # # if result == "Parabéns, você acertou o número!":
