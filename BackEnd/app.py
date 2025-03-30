@@ -3,7 +3,7 @@ from flask_cors import CORS
 import random
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://3.230.155.129"}})  # Allowing only your frontend
+CORS(app, resources={"/*": {"origins": "44.220.47.204"}})  # Allowing only your frontend
 
 # Game logic
 class Game:
