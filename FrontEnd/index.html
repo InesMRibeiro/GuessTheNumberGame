@@ -20,7 +20,7 @@
         </div>
     </div>
     <script>
-        const backendUrl = "44.220.47.204:5000";
+        const backendUrl = "http://54.209.74.199:5000";
 
         function startGame() {
             const playerName = document.getElementById("playerName").value;
@@ -29,7 +29,7 @@
                 return;
             }
             
-            fetch(`44.220.47.204:5000/start_game`, {
+            fetch(`${backendUrl}/start_game`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ player_name: playerName })
