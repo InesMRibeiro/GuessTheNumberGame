@@ -5,7 +5,7 @@
 resource "aws_security_group" "frontendSG" {
   name        = "frontendSG"
   description = "Permitir HTTP e SSH"
-  vpc_id      = aws_vpc.game_vpc.id 
+
 
     ingress {
         from_port   = 22

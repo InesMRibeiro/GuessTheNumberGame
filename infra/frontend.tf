@@ -3,10 +3,8 @@
 resource "aws_instance" "frontend" {
   ami                     = var.ami_id
   instance_type           = var.instance_type
-  subnet_id               = aws_subnet.game_subnet.id
-  vpc_security_group_ids  = [aws_security_group.frontendSG.id]
+  security_groups         = [aws_security_group.frontendSG.name] 
   key_name = var.key_name
-  associate_public_ip_address = true
 
   tags = {
     Name = "FrontEnd-Instance"
@@ -26,6 +24,6 @@ resource "aws_instance" "frontend" {
               if [ ! -d "GuessTheNumberGame" ]; then
                 git clone https://github.com/InesMRibeiro/GuessTheNumberGame.git
               fi
-              cp GuessTheNumberGame/FrontEnd/* /var/www/html/
+              sudo cp GuessTheNumberGame/FrontEnd/* /var/www/html/
               EOF
 }
