@@ -12,23 +12,35 @@
         <p>Digite seu nome para começar o jogo:</p>
         <input type="text" id="playerName" placeholder="Seu nome">
         <button onclick="startGame()">Iniciar Jogo</button>
+
         <div id="gameArea" style="display: none;">
             <p>Tente adivinhar um número entre 0 e 100:</p>
-            <input type="number" id="playerGuess">
+            <input type="number" id="playerGuess" min="0" max="100">
             <button onclick="makeGuess()">Enviar Palpite</button>
             <p id="feedback"></p>
         </div>
+
+        <h2>Scoreboard - Top 10 Jogadores</h2>
+        <table id="scoreboard">
+            <tr>
+                <th>Nome</th>
+                <th>Tentativas</th>
+                <th>Data</th>
+            </tr>
+        </table>
+        <button onclick="loadScoreboard()">Atualizar Scoreboard</button>
     </div>
+
     <script>
-        const backendUrl = "http://3.89.111.149:5000";
+        const backendUrl = "http://18.205.155.209:5000";  // Atualize se necessário
 
         function startGame() {
-            const playerName = document.getElementById("playerName").value;
+            const playerName = document.getElementById("playerName").value.trim();
             if (!playerName) {
                 alert("Por favor, insira seu nome!");
                 return;
             }
-            
+
             fetch(`${backendUrl}/start_game`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -38,14 +50,22 @@
             .then(data => {
                 alert(data.message);
                 document.getElementById("gameArea").style.display = "block";
+                document.getElementById("playerGuess").value = ""; // Limpa input anterior
+                document.getElementById("playerGuess").disabled = false; // Reativa input
             })
             .catch(error => console.error("Erro ao iniciar o jogo:", error));
         }
 
         function makeGuess() {
-            const playerName = document.getElementById("playerName").value;
-            const playerGuess = document.getElementById("playerGuess").value;
-            
+            const playerName = document.getElementById("playerName").value.trim();
+            const playerGuessInput = document.getElementById("playerGuess");
+            const playerGuess = playerGuessInput.value.trim();
+
+            if (!playerGuess) {
+                alert("Digite um número antes de enviar!");
+                return;
+            }
+
             fetch(`${backendUrl}/make_guess`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -54,8 +74,31 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("feedback").innerText = data.message;
+                
+                if (data.message.includes("Parabéns")) {
+                    playerGuessInput.disabled = true; // Desativa input após vitória
+                }
             })
             .catch(error => console.error("Erro ao enviar palpite:", error));
+        }
+
+        function loadScoreboard() {
+            fetch(`${backendUrl}/scoreboard`)
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById("scoreboard");
+                table.innerHTML = "<tr><th>Nome</th><th>Tentativas</th><th>Data</th></tr>";
+
+                data.forEach(player => {
+                    let dateText = player.win_date ? new Date(player.win_date).toLocaleString() : "N/A";
+                    table.innerHTML += `<tr>
+                        <td>${player.player_name}</td>
+                        <td>${player.attempts}</td>
+                        <td>${dateText}</td>
+                    </tr>`;
+                });
+            })
+            .catch(error => console.error("Erro ao carregar scoreboard:", error));
         }
     </script>
 </body>
