@@ -7,8 +7,8 @@ import os
 app = Flask(__name__)
 CORS(app, resources={"/*": {"origins": "http://44.203.0.221"}})  # Allowing only your frontend
 
-DATABASE_IP = os.getenv('DATABASE_IP', '107.23.102.122')  # Substitua pelo IP correto
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:postgres@{'107.23.102.122'}:5432/WINNERS'
+DATABASE_IP = os.getenv('DATABASE_IP', '54.227.233.18')  # Substitua pelo IP correto
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:postgres@{'54.227.233.18'}:5432/WINNERS'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
