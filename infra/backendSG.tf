@@ -1,3 +1,10 @@
+# -----------------------------------------------------------------------------
+# backendSG.tf
+# -----------------------------------------------------------------------------
+# Security Groups
+# Inbound and Outbound Rules for the Backend Security Group
+# -----------------------------------------------------------------------------
+
 resource "aws_security_group" "backendSG" {
   name        = "backendSG"
   description = "Permitir HTTP e SSH"

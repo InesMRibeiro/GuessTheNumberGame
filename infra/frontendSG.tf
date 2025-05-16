@@ -1,6 +1,9 @@
-#
+# -----------------------------------------------------------------------------
+# frontendSG.tf
+# -----------------------------------------------------------------------------
 # Security Groups
-#
+# Inbound and Outbound Rules for the Frontend Security Group
+# -----------------------------------------------------------------------------
 
 resource "aws_security_group" "frontendSG" {
   name        = "frontendSG"

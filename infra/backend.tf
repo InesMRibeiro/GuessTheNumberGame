@@ -1,3 +1,11 @@
+# -----------------------------------------------------------------------------
+# EC2_APIServer
+# -----------------------------------------------------------------------------
+# This Terraform configuration provisions an AWS EC2 instance to serve as the Backend for the "Guess The Number" game.
+# It uses a specified AMI, instance type, and SSH key, and attaches a security group for access control.
+# The instance deploys the backend code from a GitHub repository.
+# -----------------------------------------------------------------------------
+
 resource "aws_instance" "api_server" {
   ami                     = var.ami_id
   instance_type           = var.instance_type

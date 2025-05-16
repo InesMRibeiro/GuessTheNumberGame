@@ -1,6 +1,9 @@
-#
-#   Outputs dos Ips das Instâncias
-#
+# -----------------------------------------------------------------------------
+# outputs.tf  
+# -----------------------------------------------------------------------------
+# This file contains output value definitions for the Terraform configuration.
+# Update these outputs as needed to expose relevant infrastructure information.
+# -----------------------------------------------------------------------------
 
 output "backend-ip" {
 
